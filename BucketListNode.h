@@ -30,11 +30,11 @@ public:
         return this->next = next;
     }
 
-    BucketListNode* set_prev(BucketListNode* prev) {
+    void set_prev(BucketListNode* prev) {
         this->prev = prev;
     }
 
-    BucketListNode* set_next(BucketListNode* next) {
+    void set_next(BucketListNode* next) {
         this->next = next;
     }
 };

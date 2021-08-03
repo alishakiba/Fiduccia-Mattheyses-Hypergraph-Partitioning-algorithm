@@ -46,13 +46,6 @@ public:
     int max_gain() {
         return this->index_to_gain(this->max_gain_index);
     }
-    bool move_cell_in(int cell) {
-        // cell is moved to this partition
-    }
-    bool move_cell_out(int cell) {
-        // cell is moved to the other partition
-    }
-    // this is the gain of the newly added cell
     // we'll check whether we need to update the
     // max_gain_index value
     void update_max_gain_index_after_add(int gain) {

@@ -2,6 +2,7 @@
 #define BUCKET_LIST_STRUCTURE_HEADER_H
 
 #include "BucketListStructure.h"
+#include "BucketListNode.h"
 
 class FMAlgorithm
 {

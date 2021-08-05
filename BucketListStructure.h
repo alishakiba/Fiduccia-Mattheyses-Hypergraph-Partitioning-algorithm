@@ -219,6 +219,16 @@ public:
     inline bool empty() {
         return this->number_of_free_cells == 0;
     }
+    void lock_cell(int cell) {
+        auto node = this->cells[cell];
+        if (node.first != nullptr) {
+            this->remove_cell_from_gain(node.first, node.second);
+        }
+        this->cells[cell].first = nullptr;
+        delete this->cells[cell].first;
+        this->cells[cell].second = 0;
+        this->number_of_free_cells--;
+    }
 };
 
 #endif 

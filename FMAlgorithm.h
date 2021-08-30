@@ -6,6 +6,8 @@
 #include <set>
 #include <time.h>
 #include <cstdlib>
+#include <string>
+#include <fstream>
 using namespace std;
 
 class FMAlgorithm
@@ -254,26 +256,12 @@ protected:
         return true;
     }
 public:
-    FMAlgorithm(int number_of_cells, int number_of_nets, double ratio, int pmax) {
-        this->number_of_cells = number_of_cells;
-        this->number_of_nets = number_of_nets;
+    FMAlgorithm(double ratio) {
         // TODO: initial partition
-        this->gain = new int[this->number_of_cells];
-        this->distribution[0] = new int[this->number_of_nets];
-        this->distribution[1] = new int[this->number_of_nets];
         this->ratio = ratio;
-        this->nets_to_cells = new set<int>[this->number_of_nets];
-        this->cells_to_nets = new set<int>[this->number_of_cells];
-        this->pmax = pmax;
-        this->seed = time(0);
-        srand(this->seed);
-        /* */
-        for(int i = 0; i < this->number_of_cells; ++i) 
-            this->free_cells[i] = false;
-        this->count_free_cells = this->number_of_cells;
     }
-    void run() {
-        this->read_input();
+    void run(string input_file, string output_file) {
+        this->read_input(input_file);
         this->initial_partition();
         this->compute_initial_distribution();
         this->compute_initial_gain();
@@ -281,13 +269,53 @@ public:
         while (i <= this->MAX_ITER && this->iterate()) {
             ++i;
         }
-        this->write_output();
+        this->write_output(output_file);
     }
-    void read_input() {
+    void read_input(string filename) {
+        ifstream fin(filename);
+        //
+        fin >> this->number_of_cells >> this->number_of_nets;
 
+        this->gain = new int[this->number_of_cells];
+        this->distribution[0] = new int[this->number_of_nets];
+        this->distribution[1] = new int[this->number_of_nets];
+        this->nets_to_cells = new set<int>[this->number_of_nets];
+        this->cells_to_nets = new set<int>[this->number_of_cells];
+        this->seed = time(0);
+        srand(this->seed);
+        /* */
+        for(int i = 0; i < this->number_of_cells; ++i) 
+            this->free_cells[i] = false;
+        this->count_free_cells = this->number_of_cells;
+
+        for (int i = 0; i < this->number_of_nets; ++i) {
+            // for net # i
+            int cell;
+            while(fin >> cell) {
+                // for cell # cell
+                if (cell == -1) {
+                    break;
+                }
+                else {
+                    this->nets_to_cells[i].insert(cell);
+                    this->cells_to_nets[cell].insert(i);
+                }
+            }
+        }
+
+        this->pmax = -1;
+        for(int i = 0; i < this->number_of_cells; ++i) {
+            if (this->pmax < this->cells_to_nets[i].size()) {
+                this->pmax = this->cells_to_nets[i].size();
+            }
+        }
     }
-    void write_output() {
-        
+    void write_output(string filename) {
+        ofstream fout(filename);
+        for(int i = 0; i < this->number_of_cells; ++i) {
+            fout << i << "\t" << (this->partition[i] ? 0 : 1) << endl;
+        }
+        fout.close();
     }
     ~FMAlgorithm();
 };

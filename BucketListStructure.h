@@ -2,6 +2,7 @@
 #define BUCKET_LIST_STRUCTURE_HEADER_H
 
 #include "BucketListNode.h"
+using namespace std;
 
 class BucketListStructure
 {
@@ -13,6 +14,20 @@ private:
     int max_gain_index;
     int number_of_free_cells;
 protected:
+    void print_structure() {
+        cerr << "Cells:" << endl;
+        for(int i = 0; i < this->number_of_cells; ++i) {
+            auto cell = this->cells[i];
+            if (cell.first != nullptr)
+                cerr << "\t" << i << ": cell# " << cell.first->get_cell_number() << " with gain:" << cell.second << endl;
+        }
+        cerr << "Gains:" << endl;
+        for(int i = 0; i < this->number_of_cells; ++i) {
+            auto gain = this->gains[i];
+            if (gain != nullptr)
+                cerr << "\t" << i << ": next# " << gain->get_next() << " prev:" << gain->get_prev() << endl;
+        }
+    }
     inline int index_to_gain(int index) {
         return index - this->pmax;
     }
@@ -28,7 +43,7 @@ protected:
     }
     // adding a cell node to front of gains list
     void add_cell_to_front_gain(BucketListNode* node, int gain) {   
-        auto dummy_head = this->gains[gain];
+        BucketListNode* dummy_head = this->gains[this->gain_to_index(gain)];
         if (dummy_head->get_next() == nullptr) {
             // it is empty
             dummy_head->set_next(node);
@@ -50,11 +65,18 @@ protected:
         }
     }
     void add_cell_to_end_gain(BucketListNode* node, int gain) {   
-        auto dummy_head = this->gains[gain];
+        cerr << "********* BEFORE *************" << endl;
+        this->print_structure();
+        // cerr << "add_cell_to_end_gain(gain=" << gain << ")" << endl;
+        // auto dummy_head = this->gains[gain];
+        BucketListNode* dummy_head = this->gains[this->gain_to_index(gain)];
+        // cerr << "before:dummy_head->next: " << dummy_head->get_next() << endl;
+        // cerr << "before:dummy_head->prev: " << dummy_head->get_prev() << endl;
         if (dummy_head->get_next() == nullptr) {
             // it is empty
             dummy_head->set_next(node);
             dummy_head->set_prev(node);
+            // cerr << "after:dummy_head->next: " << dummy_head->get_next() << endl;
 
             node->set_next(dummy_head);
             node->set_prev(dummy_head);
@@ -68,7 +90,11 @@ protected:
             last_node->set_next(node);
 
             dummy_head->set_prev(node);
+            // cerr << "after:dummy_head->prev: " << dummy_head->get_prev() << endl;
         }
+        // this->gains[this->gain_to_index(gain)] = dummy_head;
+        cerr << "********* AFTER *************" << endl;
+        this->print_structure();
     }
     // precondition: the gains[gain] is of length 0 after removal of node
     void update_max_gain_index_after_remove(int gain) {
@@ -156,7 +182,7 @@ public:
         delete[] this->cells;
         delete[] this->gains;
     }
-    int max_gain_index() {
+    int get_max_gain_index() {
         return this->max_gain_index;
     }
     int max_gain() {
@@ -181,11 +207,14 @@ public:
         this->update_max_gain_index_after_add(gain);
     }
     void add_cell_to_end(int cell, int gain) {
+        
         if (this->cells[cell].first != nullptr) {
             // we had it previously, so lets just change it.
             auto node = this->cells[cell];
             this->remove_cell_from_gain(node.first, node.second);
+
             this->add_cell_to_end_gain(node.first, gain);
+
             node.second = gain;
         }
         else {
@@ -195,6 +224,7 @@ public:
             this->cells[cell] = make_pair(node, gain);
             this->number_of_free_cells++;
         }
+        
         this->update_max_gain_index_after_add(gain);
     }
     // int get_cell_with_max_gain()

@@ -18,16 +18,16 @@ public:
         return this->cell_number;
     }
 
-    int set_cell_number(int cell_number) {
+    void set_cell_number(int cell_number) {
         this->cell_number = cell_number;
     }
 
     BucketListNode* get_prev() {
-        return this->prev = prev;
+        return this->prev;
     }
 
     BucketListNode* get_next() {
-        return this->next = next;
+        return this->next;
     }
 
     void set_prev(BucketListNode* prev) {

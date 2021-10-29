@@ -40,11 +40,11 @@ namespace fm {
         this->prev = nullptr;
     }
 
-    void Node::setNext(const Node* next) {
+    void Node::setNext(Node* next) {
         this->next = next;
     }
 
-    void Node::setPrev(const Node* prev) {
+    void Node::setPrev(Node* prev) {
         this->prev = prev;
     }
 

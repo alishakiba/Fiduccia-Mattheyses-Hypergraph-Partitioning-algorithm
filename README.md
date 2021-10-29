@@ -8,3 +8,10 @@ This is my attempt to implement the *FM-algorithm* based on the original paper
 
     #of_cells #of_nets
     cells in each net -1
+
+# Building the project
+
+For running the tests with `GoogleTest`, run the following command:
+
+   bazel test --test_output=all //test:hello_test
+

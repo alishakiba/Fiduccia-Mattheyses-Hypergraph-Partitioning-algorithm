@@ -27,6 +27,10 @@ namespace fm {
             ~BucketList();
             void add_cell(int cell_id, int gain);
             void remove_cell(int cell_id);
+            int getMaxGain();
+            bool isEmpty();
+            int getRemainingCells();
+            int getMaxNumberCells();
     };
 }
 

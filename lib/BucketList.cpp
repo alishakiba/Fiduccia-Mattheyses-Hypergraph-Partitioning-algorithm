@@ -1,6 +1,6 @@
 #include "BucketList.hpp"
 
-fm::BucketList::BucketList(int pmax, int C) : pmax {pmax}, C {C}, max_gain {-pmax}, max_gain_index {-1}, remaining_cells {0} {
+fm::BucketList::BucketList(int pmax, int C) : pmax (pmax), C (C), max_gain (-pmax), max_gain_index (-1), remaining_cells (0) {
     this->cell = new Node*[C];
     for(int i = 0; i < C; ++i) {
         this->cell[i] = nullptr;
@@ -96,6 +96,7 @@ void fm::BucketList::remove_cell_(int cell_id) {
 }
 
 void fm::BucketList::add_cell(int cell_id, int gain) {
+    // TODO: we should check if this cell which is updated is the only element with the max_gain
     if (gain <= this->max_gain) {
         // no need to taking care of the max_gain
         // so just we run the add algorithm
@@ -151,4 +152,20 @@ void fm::BucketList::remove_cell(int cell_id) {
     // else {
     //     nothing is needed to do
     // }
+}
+
+int fm::BucketList::getMaxGain() {
+    return this->max_gain;
+}
+
+bool fm::BucketList::isEmpty() {
+    return this->remaining_cells == 0;
+}
+
+int fm::BucketList::getRemainingCells() {
+    return this->remaining_cells;
+}
+
+int fm::BucketList::getMaxNumberCells() {
+    return this->C;
 }

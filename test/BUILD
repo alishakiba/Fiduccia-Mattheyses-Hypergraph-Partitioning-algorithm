@@ -7,3 +7,24 @@ cc_test(
   srcs = ["hello_test.cpp"],
   deps = ["@com_google_googletest//:gtest_main"],
 )
+
+cc_test(
+  name = "node_test",
+  size = "small",
+  srcs = ["node_test.cpp"],
+  deps = [
+    "@com_google_googletest//:gtest_main",
+    "//lib:FM_library"
+  ],
+)
+
+cc_test(
+  name = "bucket_list_test",
+  size = "small",
+  srcs = ["bucket_list_test.cpp"],
+  deps = [
+    "@com_google_googletest//:gtest_main",
+    "//lib:FM_library"
+  ],
+)
+

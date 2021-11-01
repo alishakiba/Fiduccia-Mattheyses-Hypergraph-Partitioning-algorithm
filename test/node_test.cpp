@@ -6,9 +6,9 @@ class NodeTest : public ::testing::Test {
     protected:
         void SetUp() override {
             //
-            this->node_ = new fm::Node(123);
-            this->node_next_ = new fm::Node(789);
-            this->node_prev_ = new fm::Node(111);
+            this->node_ = new fm::Node(123, 0);
+            this->node_next_ = new fm::Node(789, -1);
+            this->node_prev_ = new fm::Node(111, +1);
         }
 
         void TearDown() override {

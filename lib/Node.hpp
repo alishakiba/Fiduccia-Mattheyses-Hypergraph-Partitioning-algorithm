@@ -12,9 +12,9 @@ namespace fm {
         Node *prev;
         unsigned long cell_id;
         bool is_head;
-        int current_gain;
+        int current_gain; // if head, then stores the number of elements it is pointing to
     public:
-        Node(unsigned long cell_id, Node *prev = nullptr, Node *next = nullptr, bool is_head = false);
+        Node(unsigned long cell_id, int gain, Node *prev = nullptr, Node *next = nullptr, bool is_head = false);
         Node(const Node &node);
         ~Node();
 

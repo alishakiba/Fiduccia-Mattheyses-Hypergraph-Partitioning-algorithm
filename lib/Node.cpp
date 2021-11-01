@@ -2,13 +2,13 @@
 
 namespace fm {
     
-    Node::Node(unsigned long cell_id, Node *prev, Node *next, bool is_head)
-        : next (next), prev (prev), cell_id (cell_id), is_head (is_head)
+    Node::Node(unsigned long cell_id, int gain, Node *prev, Node *next, bool is_head)
+        : next (next), prev (prev), cell_id (cell_id), is_head (is_head), current_gain (gain)
     {
     }
 
     Node::Node(const Node &node) 
-        : Node(node.cell_id, node.prev, node.next, node.is_head)
+        : Node(node.cell_id, node.current_gain, node.prev, node.next, node.is_head)
     {
     }
     

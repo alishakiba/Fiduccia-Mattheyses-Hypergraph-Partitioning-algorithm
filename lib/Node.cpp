@@ -55,4 +55,12 @@ namespace fm {
         return ss.str();
     }
 
+    void Node::setCurrentGain(int gain) {
+        this->current_gain = gain;
+    }
+
+    int Node::getCurrentGain() {
+        return this->current_gain;
+    }
+
 }

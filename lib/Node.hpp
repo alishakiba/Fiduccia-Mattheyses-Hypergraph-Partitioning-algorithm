@@ -12,6 +12,7 @@ namespace fm {
         Node *prev;
         unsigned long cell_id;
         bool is_head;
+        int current_gain;
     public:
         Node(unsigned long cell_id, Node *prev = nullptr, Node *next = nullptr, bool is_head = false);
         Node(const Node &node);
@@ -24,6 +25,9 @@ namespace fm {
 
         long getCellID();
         void setCellID(unsigned long cell_id);
+
+        void setCurrentGain(int gain);
+        int getCurrentGain();
 
         std::string toString() const;
 

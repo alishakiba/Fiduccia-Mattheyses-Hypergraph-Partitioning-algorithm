@@ -1,13 +1,14 @@
 #include "BucketList.hpp"
 
-fm::BucketList::BucketList(int pmax, int C) : pmax (pmax), C (C), max_gain (-pmax), max_gain_index (-1), remaining_cells (0) {
+fm::BucketList::BucketList(int pmax, int C) 
+    : pmax (pmax), C (C), max_gain (-pmax), max_gain_index (-1), remaining_cells (0) {
     this->cell = new Node*[C];
     for(int i = 0; i < C; ++i) {
         this->cell[i] = nullptr;
     }
     this->gains = new Node*[2 * pmax + 1];
     for(int i = 0; i < 2 * pmax + 1; ++i) {
-        this->gains[i] = new Node(i, nullptr, nullptr, true);
+        this->gains[i] = new Node(i, 0, nullptr, nullptr, true);
     }
 }
 
@@ -42,7 +43,7 @@ void fm::BucketList::add_cell_(int cell_id, int gain) {
     }
     else {
         // this is an add operation
-        Node *node = new Node(cell_id);
+        Node *node = new Node(cell_id, gain);
         this->cell[cell_id] = node;
         int gain_index = gain_2_index(gain);
         auto gain_head = this->gains[gain_index];
@@ -58,11 +59,13 @@ void fm::BucketList::add_cell_(int cell_id, int gain) {
             prev_node->setNext(node);
 
             gain_head->setPrev(node);
+            gain_head->setCurrentGain(gain_head->getCurrentGain() + 1); // increment the # of cells in this gain linked list
         }
         else if (gain_head->getNext() == nullptr) {
             // the list is empty
             gain_head->setPrev(node);
             gain_head->setNext(node);
+            gain_head->setCurrentGain(1);
 
             node->setNext(gain_head);
             node->setPrev(gain_head);
@@ -91,21 +94,43 @@ void fm::BucketList::remove_cell_(int cell_id) {
         }
         this->cell[cell_id] = nullptr;
         this->remaining_cells--;
+
+        auto gain_head = this->gains[this->gain_2_index(node->getCurrentGain())];
+        gain_head->setCurrentGain(gain_head->getCurrentGain() - 1); // decrement the # of cells in this gain linked list
         delete node;
     }
 }
 
 void fm::BucketList::add_cell(int cell_id, int gain) {
     // TODO: we should check if this cell which is updated is the only element with the max_gain
-    if (gain <= this->max_gain) {
-        // no need to taking care of the max_gain
-        // so just we run the add algorithm
-        this->add_cell_(cell_id, gain);
+    Node *gain_head;
+    bool gain_update_required = false;
+    if (this->cell[cell_id] != nullptr) {
+        gain_head = this->gains[this->gain_2_index(this->cell[cell_id]->getCurrentGain())];
+        gain_update_required = true;
     }
-    else {
+    if (gain > this->max_gain) {
         // we need to take care of the max_gain
         this->max_gain = gain;
         this->max_gain_index = this->gain_2_index(gain);
+        this->add_cell_(cell_id, gain);
+    }
+    else if (gain_update_required) {
+        //as well as gain <= this->max_gain
+        this->add_cell_(cell_id, gain);
+        
+        Node *gain_head = nullptr;
+        int i = this->max_gain_index;
+        
+        for(i = this->max_gain_index;  this->gains[i]->getCurrentGain() <= 0; gain_head = this->gains[i], --i);
+
+        this->max_gain = this->index_2_gain(i);
+        this->max_gain_index = i;
+    }
+    else {
+        // gain <= this->max_gain and there is no need to update max_gain
+        // no need to taking care of the max_gain
+        // so just we run the add algorithm
         this->add_cell_(cell_id, gain);
     }
 }

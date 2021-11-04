@@ -1,3 +1,5 @@
+// bazel test --test_output=all //test:bucket_list_test --compiler=mingw-gcc
+
 #include <gtest/gtest.h>
 
 #include "lib/BucketList.hpp"
@@ -38,6 +40,7 @@ TEST_F(BucketListTest, AddCellTest) {
     EXPECT_EQ(bucket_a->getRemainingCells(), 5);
     EXPECT_EQ(bucket_a->getMaxGain(), 7);
     bucket_a->remove_cell(5);
+    // TODO: add more test cases
 }
 
 // TEST_F(BucketListTest, RemoveCellTest) {

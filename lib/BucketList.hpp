@@ -4,6 +4,7 @@
 #include "Node.hpp"
 #include <stdexcept>
 #include <assert.h>
+#include <iostream>
 
 namespace fm {
     class BucketList {
@@ -12,12 +13,12 @@ namespace fm {
             int pmax;
             int C;
             int max_gain;
-            unsigned int max_gain_index;
+            int max_gain_index;
             Node ** cell;
             Node ** gains;
             int remaining_cells;
-            unsigned int gain_2_index(int gain);
-            int index_2_gain(unsigned int index);
+            int gain_2_index(int gain);
+            int index_2_gain(int index);
             void find_the_next_max_gain();
             void add_cell_(int cell_id, int gain);
             void remove_cell_(int cell_id);
@@ -31,6 +32,7 @@ namespace fm {
             bool isEmpty();
             int getRemainingCells();
             int getMaxNumberCells();
+            int getMaxGainCellID();
     };
 }
 

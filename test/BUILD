@@ -28,3 +28,13 @@ cc_test(
   ],
 )
 
+cc_test(
+  name = "fm_algorithm_test",
+  size = "small",
+  srcs = ["fm_algorithm_test.cpp"],
+  deps = [
+    "@com_google_googletest//:gtest_main",
+    "//lib:FM_library"
+  ],
+)
+

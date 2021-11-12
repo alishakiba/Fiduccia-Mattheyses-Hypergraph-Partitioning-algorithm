@@ -27,11 +27,11 @@ fm::BucketList::~BucketList() {
     delete [] this->gains;
 }
 
-unsigned int fm::BucketList::gain_2_index(int gain) {
+int fm::BucketList::gain_2_index(int gain) {
     return gain + this->pmax;
 }
 
-int fm::BucketList::index_2_gain(unsigned int index) {
+int fm::BucketList::index_2_gain(int index) {
     return index - this->pmax;
 }
 
@@ -102,7 +102,6 @@ void fm::BucketList::remove_cell_(int cell_id) {
 }
 
 void fm::BucketList::add_cell(int cell_id, int gain) {
-    // TODO: we should check if this cell which is updated is the only element with the max_gain
     Node *gain_head;
     bool gain_update_required = false;
     if (this->cell[cell_id] != nullptr) {
@@ -181,6 +180,16 @@ void fm::BucketList::remove_cell(int cell_id) {
 
 int fm::BucketList::getMaxGain() {
     return this->max_gain;
+}
+
+int fm::BucketList::getMaxGainCellID() {
+    if (this->max_gain_index >= 0 && this->gains[this->max_gain_index] != nullptr 
+            && this->gains[this->max_gain_index]->getNext() != nullptr) {
+        return this->gains[this->max_gain_index]->getNext()->getCellID();
+    }
+    else {
+        return -1;
+    }
 }
 
 bool fm::BucketList::isEmpty() {

@@ -4,6 +4,13 @@ fm::FMAlgorithm::FMAlgorithm(double ratio, int k, int max_iter, bool verbose)
     : ratio {ratio}, k {k}, MAX_ITER {max_iter}, verbose {verbose} 
 {
     // nothing to do
+    if (verbose) {
+        std::cout << "In FM Constructor:" << std::endl;
+        std::cout << "\tratio: " << this->ratio << std::endl;
+        std::cout << "\tk: " << this->k << std::endl;
+        std::cout << "\tmax_iter" << this->MAX_ITER;
+        std::cout << "\tverbose: " << this->verbose << std::endl;
+    }
 }
 
 fm::FMAlgorithm::~FMAlgorithm() {
@@ -21,19 +28,44 @@ fm::FMAlgorithm::~FMAlgorithm() {
 }
 
 bool fm::FMAlgorithm::is_balance_criterion_satisfied(char from) {
-    int size = from == 'a' ? this->size_A - 1 : this->numOfCells - this->size_A - 1;
-    if (this->numOfCells * this->ratio - this->k <= size
-            && size <= this->numOfCells * this->ratio + this->k) {
+    int size = ((from == 'a') ? this->size_A - 1 : this->numOfCells - this->size_A - 1);
+    if (this->numOfCells * this->ratio - this->k - 1 <= size
+            && size <= this->numOfCells * this->ratio + this->k + 1) {
             // we can move from A without violating the balance criterion
+            if (verbose) {
+                std::cout << "\t\tBalance criterion is satisfied. from " << from << ": "
+                        << this->numOfCells * this->ratio - this->k - 1 
+                        << " <= " << size << " <= "
+                        << this->numOfCells * this->ratio + this->k + 1 
+                        << std::endl;
+            }
             return true;
     }
     else {
         // the balancing criterion is violated if we move a cell
+        if (verbose) {
+            std::cout << "\t\tBalance criterion is violated. from " << from << ": "
+                    << this->numOfCells * this->ratio - this->k - 1 
+                    << " !<= " << size << " !<= "
+                    << this->numOfCells * this->ratio + this->k + 1 
+                    << " ***** numOfCells: " << this->numOfCells 
+                    << " ratio: " << this->ratio 
+                    << " k: " << this->k
+                    << " size_A: " << size_A
+                    << std::endl;
+        }
         return false;
     }
 }
 
 void fm::FMAlgorithm::initial_partition(const std::set<int>* partition_A) {
+    if (verbose) {
+        std::cout << "In initial_partition:" << std::endl;
+        std::cout << "bucket_A: " << std::endl;
+        this->bucketA->print();
+        std::cout << "bucket_B: " << std::endl;
+        this->bucketB->print();
+    }
     // initialize the partition
     if (partition_A == nullptr) {
         // taking care of the balancing criterion
@@ -161,7 +193,11 @@ void fm::FMAlgorithm::move_base_cell(int cell) {
     }
     // change the base cell's partition
     this->partition[cell] = (this->partition[cell] == 'a') ? 'b' : 'a';
-
+    // if (this->verbose) {
+    //     std::cout << "\tSuccessfully removed base cell " 
+    //             << cell << " to " 
+    //             << this->partition[cell] << std::endl;
+    // }
     // update the distribution
     for(auto net: this->cells_to_nets[cell]) {
         // check critical nets
@@ -241,6 +277,7 @@ void fm::FMAlgorithm::move_base_cell(int cell) {
             }
         }
     }
+
     if (F == 0) {
         this->size_A--;
     }
@@ -262,21 +299,25 @@ bool fm::FMAlgorithm::single_move() {
         // we can move from A to B without violating the balance criterion
         base_cell = this->bucketA->getMaxGainCellID();
         assert(base_cell != -1);
+        assert(this->free[base_cell]);
     }
     else if (!this->bucketB->isEmpty() && max_gain_a <= max_gain_b && this->is_balance_criterion_satisfied('b')) {
         // we can move from B to A without violating the balance criterion
         base_cell = this->bucketB->getMaxGainCellID();
         assert(base_cell != -1);
+        assert(this->free[base_cell]);
     }
     else if (!this->bucketA->isEmpty() && this->is_balance_criterion_satisfied('a')) {
         // we can move from A to B without violating the balance criterion
         base_cell = this->bucketA->getMaxGainCellID();
         assert(base_cell != -1);
+        assert(this->free[base_cell]);
     }
     else if (!this->bucketB->isEmpty() && this->is_balance_criterion_satisfied('b')) {
         // we can move from B to A without violating the balance criterion
         base_cell = this->bucketB->getMaxGainCellID();
         assert(base_cell != -1);
+        assert(this->free[base_cell]);
     }
     else {
         // no further moves are possible
@@ -315,7 +356,9 @@ void fm::FMAlgorithm::read_input(std::string input_filename) {
     }
     //
     fin >> this->numOfCells >> this->numOfNets;
-
+    if (this->verbose) {
+        std::cout << "numOfCells: " << this->numOfCells << " numOfNets: " << this->numOfNets << std::endl;
+    }
     this->gain = new int[this->numOfCells];
     this->distribution[0] = new int[this->numOfNets];
     this->distribution[1] = new int[this->numOfNets];
@@ -325,7 +368,7 @@ void fm::FMAlgorithm::read_input(std::string input_filename) {
     this->partition = new char[this->numOfCells];
     /* */
     for(int i = 0; i < this->numOfCells; ++i) 
-        this->free[i] = false;
+        this->free[i] = true;
     this->countOfFreeCells = this->numOfCells;
     
     for (int i = 0; i < this->numOfNets; ++i) {
@@ -418,6 +461,17 @@ void fm::FMAlgorithm::run(std::string input_filename, std::string output_filenam
     this->initial_partition();
     this->initial_distribution();
     this->initial_gain();
+
+    if (verbose) {
+        std::cout << "Before the first iteration:" 
+        << " size_A: " << this->size_A 
+        << " size_B: " << this->numOfCells - this->size_A
+        << std::endl;
+        std::cout << "bucket_A: " << std::endl;
+        this->bucketA->print();
+        std::cout << "bucket_B: " << std::endl;
+        this->bucketB->print();
+    }
 
     int i = 0;
     while (i <= this->MAX_ITER && this->iterate()) {

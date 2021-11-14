@@ -3,6 +3,7 @@
 
 #include<string>
 #include<sstream>
+#include<iostream>
 
 namespace fm {
     class Node
@@ -32,6 +33,8 @@ namespace fm {
         std::string toString() const;
 
         bool isHead();
+
+        void print();
 
     };
 

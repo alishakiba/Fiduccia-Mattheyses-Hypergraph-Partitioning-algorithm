@@ -33,6 +33,7 @@ namespace fm {
             int getRemainingCells();
             int getMaxNumberCells();
             int getMaxGainCellID();
+            void print();
     };
 }
 

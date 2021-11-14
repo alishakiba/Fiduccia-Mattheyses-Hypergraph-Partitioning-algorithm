@@ -29,7 +29,7 @@ namespace fm {
             int numOfCells = 0;
             int numOfNets = 0;
             int pmax = 0;
-            int size_A;
+            int size_A = 0;
             // the balance ratio in FM
             double ratio = 0; 
             // the balance tolerance in FM

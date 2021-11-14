@@ -63,4 +63,8 @@ namespace fm {
         return this->current_gain;
     }
 
+    void Node::print() {
+        std::cout << this->toString() << std::endl;
+    }
+
 }

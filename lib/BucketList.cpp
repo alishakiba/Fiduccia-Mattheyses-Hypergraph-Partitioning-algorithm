@@ -203,3 +203,34 @@ int fm::BucketList::getRemainingCells() {
 int fm::BucketList::getMaxNumberCells() {
     return this->C;
 }
+
+
+void fm::BucketList::print() {
+    std::cout << "Gains: " << std::endl;
+    for (int i = 0; i < 2 * this->pmax + 1; ++i) {
+        std::cout << "Gain: " << this->index_2_gain(i) << ": ";
+        if (this->gains[i] != nullptr) {
+            auto node = this->gains[i]->getNext();
+            while (node != nullptr && node->isHead() == false) {
+                std::cout << node->getCellID() << " ";
+                node = node->getNext();
+            }
+        }
+        std::cout << std::endl;
+    }
+    std::cout << "Cells: " << std::endl;
+    for (int i = 0; i < this->C; ++i) {
+        std::cout << "Cell: " << i << ": ";
+        if (this->cell[i] != nullptr) {
+            this->cell[i]->print();
+        }
+        else {
+            std::cout << "nullptr" << std::endl;
+        }
+        std::cout << std::endl;
+    }
+    std::cout << "Max Gain: " << this->max_gain << std::endl;
+    std::cout << "Max Gain Cell ID: " << this->getMaxGainCellID() << std::endl;
+    std::cout << "Remaining Cells: " << this->remaining_cells << std::endl;
+    std::cout << "Max Number of Cells: " << this->C << std::endl;
+}

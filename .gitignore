@@ -2,3 +2,4 @@
 test.*
 bazel-*
 .vscode
+.vscode/settings.json

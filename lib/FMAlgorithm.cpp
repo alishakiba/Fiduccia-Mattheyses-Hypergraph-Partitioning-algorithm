@@ -59,13 +59,13 @@ bool fm::FMAlgorithm::is_balance_criterion_satisfied(char from) {
 }
 
 void fm::FMAlgorithm::initial_partition(const std::set<int>* partition_A) {
-    if (verbose) {
-        std::cout << "In initial_partition:" << std::endl;
-        std::cout << "bucket_A: " << std::endl;
-        this->bucketA->print();
-        std::cout << "bucket_B: " << std::endl;
-        this->bucketB->print();
-    }
+    // if (verbose) {
+    //     std::cout << "In initial_partition:" << std::endl;
+    //     std::cout << "bucket_A: " << std::endl;
+    //     this->bucketA->print();
+    //     std::cout << "bucket_B: " << std::endl;
+    //     this->bucketB->print();
+    // }
     // initialize the partition
     if (partition_A == nullptr) {
         // taking care of the balancing criterion
@@ -183,6 +183,12 @@ void fm::FMAlgorithm::move_base_cell(int cell) {
     this->free[cell] = false;
     this->countOfFreeCells--;
     // remove the base cell from the BucketListStructure
+    // if (verbose) {
+    //     std::cout << "bucket_A: " << std::endl;
+    //     this->bucketA->print();
+    //     std::cout << "bucket_B: " << std::endl;
+    //     this->bucketB->print();
+    // }
     if (this->partition[cell] == 'a') {
         // cell belongs to partition A
         this->bucketA->remove_cell(cell);
@@ -191,6 +197,13 @@ void fm::FMAlgorithm::move_base_cell(int cell) {
         // cell belongs to partition B
         this->bucketB->remove_cell(cell);
     }
+    // if (verbose) {
+    //     std::cout << "bucket_A: " << std::endl;
+    //     this->bucketA->print();
+    //     std::cout << "bucket_B: " << std::endl;
+    //     this->bucketB->print();
+    //     std::cout << "cell: " << cell << " is moved to partition: " << this->partition[cell] << std::endl;
+    // }
     // change the base cell's partition
     this->partition[cell] = (this->partition[cell] == 'a') ? 'b' : 'a';
     // if (this->verbose) {
@@ -433,6 +446,12 @@ bool fm::FMAlgorithm::iterate() {
     }
     while (this->single_move()) {
         // do nothing    
+        // if (verbose) {
+        //     std::cout << "bucket_A: " << std::endl;
+        //     this->bucketA->print();
+        //     std::cout << "bucket_B: " << std::endl;
+        //     this->bucketB->print();
+        // }
     }
     if (this->verbose) {
         auto t2 = std::chrono::high_resolution_clock::now();
@@ -462,20 +481,22 @@ void fm::FMAlgorithm::run(std::string input_filename, std::string output_filenam
     this->initial_distribution();
     this->initial_gain();
 
-    if (verbose) {
-        std::cout << "Before the first iteration:" 
-        << " size_A: " << this->size_A 
-        << " size_B: " << this->numOfCells - this->size_A
-        << std::endl;
-        std::cout << "bucket_A: " << std::endl;
-        this->bucketA->print();
-        std::cout << "bucket_B: " << std::endl;
-        this->bucketB->print();
-    }
+    // if (verbose) {
+    //     std::cout << "Before the first iteration:" 
+    //     << " size_A: " << this->size_A 
+    //     << " size_B: " << this->numOfCells - this->size_A
+    //     << std::endl;
+    //     std::cout << "bucket_A: " << std::endl;
+    //     this->bucketA->print();
+    //     std::cout << "bucket_B: " << std::endl;
+    //     this->bucketB->print();
+    // }
 
     int i = 0;
     while (i <= this->MAX_ITER && this->iterate()) {
-            ++i;
+        this->initial_distribution();
+        this->initial_gain();
+        ++i;
     }
 
     this->write_output(output_filename);

@@ -153,9 +153,9 @@ void fm::BucketList::remove_cell(int cell_id) {
             // we need to take care of the max_gain
             auto node_prev = node->getPrev();
             auto node_next = node->getNext();
+            this->remove_cell_(cell_id);
             if (node_prev->isHead() && node_next->isHead()) {
                 // this is the only element in the list
-                this->remove_cell_(cell_id);
                 if (this->remaining_cells > 0) {
                     while (this->max_gain_index >=0 && this->gains[this->max_gain_index]->getNext() == nullptr) {
                         this->max_gain_index--;

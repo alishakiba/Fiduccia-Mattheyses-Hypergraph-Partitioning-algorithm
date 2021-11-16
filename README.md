@@ -15,3 +15,10 @@ For running the tests with `GoogleTest`, run the following command:
 
    bazel test --test_output=all //test:hello_test
 
+For building the full project, run the following command:
+
+   bazel build //main:FM_algorithm --compilation_mode=dbg  --compiler=mingw-gcc
+
+Running the algorithm:
+
+   .\bazel-bin\main\FM_algorithm.exe .\SampleInput.txt .\SampleOutput.txt [# of iterations] [balance ratio] [k] verbose
